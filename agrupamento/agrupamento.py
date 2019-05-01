@@ -44,3 +44,5 @@ ac.agrupar(A, l, c, dados, ruido, eta, probabilidades, grupos)
 
 ac.mostrar_classes(objetivo, grupos, probabilidades, l, c)
 
+print(ac.similaridade(A, grupos, l, c))
+

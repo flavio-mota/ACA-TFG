@@ -19,7 +19,7 @@ def constroi_automato(x, y, estados):
         y : inteiro que define a quantidade de colunas da grade.    
         estados: define quantos valores compõem o estado de cada célula.
     """
-    automato = [[[0.0 for j in range(estados)]for j in range(y)]for i in range(x)]
+    automato = [[[None for j in range(estados)]for j in range(y)]for i in range(x)]
     return automato
 
 def inicializa_estados(A, x, y, v_min, v_max, estados):
@@ -221,3 +221,15 @@ def mostrar_classes(objetivo, grupos, probabilidades, l, c):
     for i in range(l):
         print (grupos[i])
     print(" ")
+    
+def similaridade(A, grupos, l, c):
+    distancias = {}
+    for i in range(l):
+        for j in range(c):
+            rotulo = grupos[i][j]
+            if(rotulo != None):
+                for m in range(l):
+                    for n in range(c):
+                        if((grupos[m][n] != None) and (grupos[m][n] != rotulo)):
+                            distancias[str(rotulo)+','+str(grupos[m][n])] = distance.euclidean(A[i][j], A[m][n])
+    return distancias
