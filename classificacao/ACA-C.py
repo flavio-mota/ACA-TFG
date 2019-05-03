@@ -216,7 +216,6 @@ def teste(A, n, k, dados_teste, ruido):
         acoes_ = acoes(A, n, k, amostra, ruido)
         votacao_ = []
         for i in range(n):
-            print(acoes_[i].count(1))
             votacao_.append(acoes_[i].count(1))
         resultado.append(votacao_.index(max(votacao_)))
     return resultado
