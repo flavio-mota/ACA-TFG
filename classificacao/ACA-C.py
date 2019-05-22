@@ -122,9 +122,11 @@ def atualiza_estado(A, reforco, acao, eta, b, amostra, i, j):
         Estado da célula A[i][j] atualizado de acordo com o sinal de reforço.
     """
     if(reforco == 1):
-        A[i][j] = A[i][j] + eta*(acao - (reforco*acao))*amostra
+        A[i][j] = A[i][j] + eta*(np.dot(A[i][j],amostra) - (reforco*acao))*amostra
     if(reforco == -1):
-        A[i][j] = A[i][j] + b*eta*(acao - (reforco*acao))*amostra
+        A[i][j] = A[i][j] + b*eta*(np.dot(A[i][j],amostra) - (reforco*acao))*amostra
+
+
         
 def vizinhanca(acoes_, i, j, raio, k):
     """
@@ -201,8 +203,6 @@ def treinamento(A, n, k, dados_treinamento, ruido, raio, eta, b, n_iter, classes
                             vizinhos_ = vizinhanca(acoes_, i, j, raio, k)
                             if(vizinhos_.count(-1) >= (len(vizinhos_)/2)):
                                 atualiza_estado(A, 1, -1, eta, b, amostra, i, j)
-                            else:
-                                atualiza_estado(A, -1, -1, eta, b, amostra, i, j)
                         else:
                             atualiza_estado(A, -1, 1, eta, b, amostra, i, j)
         n_iter-=1
@@ -214,6 +214,7 @@ def teste(A, n, k, dados_teste, ruido):
     resultado = []
     for amostra, objetivo in zip(dados,objetivos):
         acoes_ = acoes(A, n, k, amostra, ruido)
+        print(objetivo, acoes_)
         votacao_ = []
         for i in range(n):
             votacao_.append(acoes_[i].count(1))
@@ -223,16 +224,18 @@ def teste(A, n, k, dados_teste, ruido):
                 
 
 
-A, classes_ = constroi_automato(3, 20, 4, [0,1,2])
-inicializa_estados(A, 3, 20, 0.1, 7.9, 4)
+A, classes_ = constroi_automato(3, 20, 13, [0,1,2])
 
-iris = datasets.load_iris() #carrega o dataset IRIS
+inicializa_estados(A, 3, 20, 0.1, 7.9, 13)
+
+
+iris = datasets.load_wine() #carrega o dataset IRIS
 dados = iris.data #extrai os valores de cada atributo
 y = iris.target
 
 
 X_train, X_test, y_train, y_test = train_test_split(dados, y, 
-                                    test_size = 0.3, random_state = 1, stratify=y)
+                                    test_size = 0.1, random_state = 1, stratify=y)
 sc = StandardScaler()
 sc.fit(X_train)
 sc.fit(X_test)
@@ -242,17 +245,18 @@ X_test_std = sc.transform(X_test)
 #for amostra, objetivo in zip(X_train_std, y_train):
 #    print('amostra: ', amostra, '/objetivo: ', objetivo)
 
-dados_treinamento = {'dados': X_train_std, 'objetivo': y_train}
+
+dados_treinamento = {'dados': np.array(X_train_std), 'objetivo': y_train}
 dados_teste = {'dados': X_test_std, 'objetivo': y_test}
 
 print('treinamento: ')
-treinamento(A,3,20,dados_treinamento, 1, 5, 0.5, 0.1, 1, classes_)
+treinamento(A,3,20,dados_treinamento, 1, 5, 0.5, 0, 1, classes_)
+
 
 resultado = teste(A, 3, 20, dados_teste, 1)
-
+#
 for i in range(len(y_test)):
-    print(resultado[i], y_test[i])    
+    print(resultado[i], y_test[i])
 
-
-
-    
+print((y_test != resultado).sum())    
+ 
