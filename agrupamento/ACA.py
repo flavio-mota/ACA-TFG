@@ -264,16 +264,12 @@ def agrupar(A, l, c, dados, objetivos, ruido, eta, probabilidades, n_iter, raio,
         epocas += 1
         n_iter -= 1
 
-    for i in range(l):
-        print (grupos[i])
-    print(" ")
-    print(epocas)
     
     centroides_ = centroides(A,l,c,grupos)
 
     rotulos, y_aca = rotular(A,l,c,dados,objetivos,centroides_)
     
-    return centroides_, rotulos, y_aca
+    return centroides_, rotulos, y_aca, epocas
 
 #TODO analisar a necessidade dessa função (remover!)
 def mostrar_classes(objetivo, grupos, probabilidades, l, c):
